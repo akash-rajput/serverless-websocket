@@ -1,0 +1,63 @@
+custom:
+  dynamodb:
+    stages:
+      - dev
+    start:
+      port: 8000
+      inMemory: true
+      heapInitial: 200m
+      heapMax: 1g
+      migrate: true
+      convertEmptyValues: true
+  webpack:
+    keepOutputDirectory: true
+    packager: 'npm'
+    includeModules:
+      forceExclude:
+        - aws-sdk
+package:
+  individually: true
+
+service: websocket-app
+
+plugins:
+  - serverless-dynamodb-local
+  - serverless-plugin-existing-s3
+  - serverless-dotenv-plugin
+  - serverless-offline # This should be the last in the list
+  - serverless-webpack
+
+provider:
+  name: aws
+  region: ${opt:region, 'ap-south-1'}
+  runtime: nodejs12.x
+  memorySize: 512
+  role: LambdaRole
+  versionFunctions: false
+  deploymentBucket:
+    blockPublicAccess: true # Prevents public access via ACLs or bucket policies. Default is false
+
+resources:
+  - Resources: ${file(./config/dynamoDB.yaml)}
+  - Resources: ${file(./config/lambdaRoles.yaml)}
+
+functions:
+  websocket:
+    handler: lambda/websocket.handler
+    events:
+      - websocket:
+          route: $connect
+      - websocket:
+          route: $disconnect
+      - websocket:
+          route: $default
+  publish:
+    handler: lambda/publish.handler
+    events:
+      - stream:
+          type: dynamodb
+          batchSize: 1
+          startingPosition: LATEST
+          arn: !GetAtt
+            - subscriptionEventsTable
+            - StreamArn
