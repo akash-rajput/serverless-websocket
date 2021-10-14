@@ -24,8 +24,8 @@ plugins:
   - serverless-dynamodb-local
   - serverless-plugin-existing-s3
   - serverless-dotenv-plugin
-  - serverless-offline # This should be the last in the list
   - serverless-webpack
+  - serverless-offline
 
 provider:
   name: aws
@@ -35,7 +35,7 @@ provider:
   role: LambdaRole
   versionFunctions: false
   deploymentBucket:
-    blockPublicAccess: true # Prevents public access via ACLs or bucket policies. Default is false
+    blockPublicAccess: true
 
 resources:
   - Resources: ${file(./config/dynamoDB.yaml)}

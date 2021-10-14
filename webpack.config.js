@@ -1,19 +1,13 @@
 const path = require('path');
-
-const HappyPack = require('happypack');
 const slsw = require('serverless-webpack');
 
-// This helper function is not strictly necessary.
 function srcPath(subdir) {
   return path.join(__dirname, subdir);
 }
 
 module.exports = {
-  context: __dirname, // to automatically find tsconfig.json
-  plugins: [
-    
-
-  ],
+  context: __dirname,
+  plugins: [],
   entry: slsw.lib.entries,
   externals: ['ws', 'encoding', { 'aws-sdk': 'commonjs aws-sdk' }],
   mode: 'development',
@@ -32,7 +26,6 @@ module.exports = {
   },
   target: 'node',
   module: {
-    
     rules: [
       {
       test: /\.m?js$/,

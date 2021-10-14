@@ -1,5 +1,5 @@
-import Client from '../model/client';
-import Topic from '../model/topic';
+import Client from '../helper/client';
+import Topic from '../helper/topic';
 
 export async function handler(event) {
     try {
